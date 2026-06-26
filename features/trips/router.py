@@ -2,6 +2,8 @@ from fastapi import APIRouter
 from features.trips import services
 from features.trips import schema
 
+import mock_data
+
 router = APIRouter(
     tags=["trips"], prefix="/trips"
 )
@@ -10,9 +12,16 @@ router = APIRouter(
 
 
 # 取得旅程
-@router.get('/get_trips/')
-def get_trips():
-    return services.get_all_trips()
+@router.get('/get_trips/{user_id}')
+def get_trips(user_id: str):
+    print(user_id)
+
+    # user_participated_trips = services.get_user_participated_trips(user_id)
+    user_participated_trips = mock_data.EXISTED_TRIP
+    all_users = mock_data.EXISTED_USER
+    print(user_participated_trips)
+
+    return user_participated_trips
 
 
 # 創建旅程
