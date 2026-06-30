@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from features.trips import services
 from features.trips import schema
+from core.config import HOST
 
 import mock_data
 
@@ -14,13 +15,13 @@ router = APIRouter(
 # 取得旅程
 @router.get('/get_trips/{user_id}')
 def get_trips(user_id: str):
-    print(user_id)
 
-    # user_participated_trips = services.get_user_participated_trips(user_id)
-    user_participated_trips = mock_data.EXISTED_TRIP
-    all_users = mock_data.EXISTED_USER
-    print(user_participated_trips)
-
+    if HOST =='172.16.16.77':
+        user_participated_trips = services.get_trips_and_participated_users(user_id)
+        print(user_participated_trips)
+    else:
+        user_participated_trips = mock_data.EXISTED_TRIP
+    
     return user_participated_trips
 
 
@@ -29,6 +30,7 @@ def get_trips(user_id: str):
 def new_trip(trip: schema.Trip):
     print(trip)
     
+    services.insert_new_trips(trip)
 
 
 # 更新旅程

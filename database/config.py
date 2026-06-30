@@ -1,24 +1,26 @@
-# from dotenv import load_dotenv
-# import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# dotenv_path = os.path.join(base_dir, '.env')
-# load_dotenv(dotenv_path=dotenv_path)
 
-# class Settings:
-#     DB_HOST = os.getenv("DB_HOST")
-#     DB_PORT = int(os.getenv("DB_PORT", 5432))
-#     DB_NAME = os.getenv("DB_NAME")
-#     DB_USER = os.getenv("DB_USER")
-#     DB_PASSWORD = os.getenv("DB_PASSWORD")
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8"
+    )
 
-#     DB_MIN_CONN = int(os.getenv("DB_MIN_CONN", 1))
-#     DB_MAX_CONN = int(os.getenv("DB_MAX_CONN", 10))
+    DB_HOST: str
+    DB_PORT: int = 5432
+    DB_NAME: str
+    DB_USER: str
+    DB_PASSWORD: str
 
-# settings = Settings()
+    DB_MIN_CONN: int = 1
+    DB_MAX_CONN: int = 10
 
+
+settings = Settings()
 
 
 TABLE_USERS = 'users'
 TABLE_TRIPS = 'trips'
 TABLE_TRIP_MEMBERS = 'trip_members'
+
