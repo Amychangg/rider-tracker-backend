@@ -13,5 +13,3 @@ class Trip(BaseModel):
     status: str
     trip_type: str
     meeting_location: str
-    meeting_latitude: float
-    meeting_longitude: float

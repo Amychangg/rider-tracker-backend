@@ -13,7 +13,31 @@ def get_all_trips():
     try:
         conn = connection.get_conn()
         result =  repo.select_all_trips(conn)
-        print(result)
+
+        return result
+    
+    except Exception as e:
+
+        logger.exception(e)
+
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to get trips"
+        )
+    
+    finally:
+        if conn:
+            connection.release_conn(conn)
+
+
+
+
+def get_user_participated_trips(user_id: str):
+    conn = None
+
+    try:
+        conn = connection.get_conn()
+        result =  repo.select_user_participated_trips(conn, user_id)
 
         return result
     
