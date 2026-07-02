@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+from collections.abc import Generator
 from psycopg2.pool import ThreadedConnectionPool
 from database.config import settings
 import threading
@@ -35,6 +37,17 @@ def get_conn():
 def release_conn(conn):
     if _pool is not None:
         _pool.putconn(conn)
+
+
+@contextmanager
+def conn_context() -> Generator:
+    conn = None
+    try:
+        conn = get_conn()
+        yield conn
+    finally:
+        if conn:
+            release_conn(conn)
 
 
 def close_pool():
