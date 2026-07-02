@@ -10,6 +10,5 @@ class Trip(BaseModel):
     leader_id: str
     start_datetime: datetime
     end_datetime: datetime
-    status: str
     trip_type: str
     meeting_location: str

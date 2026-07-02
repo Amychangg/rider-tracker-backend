@@ -21,17 +21,13 @@ def select_trips_and_participated_users(conn, user_id: str):
             t.leader_id,
             t.start_datetime,
             t.end_datetime,
-            t.trip_type,
-            t.status,
 
             COALESCE(
                 json_agg(
                     json_build_object(
                         'user_id', u.user_id,
-                        'user_name', u.user_name,
-                        'created_date', tm.created_date
+                        'display_name', u.display_name
                     )
-                    ORDER BY tm.created_date
                 ) FILTER (WHERE tm.user_id IS NOT NULL),
                 '[]'
             ) AS members
@@ -54,9 +50,7 @@ def select_trips_and_participated_users(conn, user_id: str):
             t.description,
             t.leader_id,
             t.start_datetime,
-            t.end_datetime,
-            t.trip_type,
-            t.status;
+            t.end_datetime;
     """
     
     params = (user_id, )
@@ -67,11 +61,82 @@ def select_trips_and_participated_users(conn, user_id: str):
 
 def insert_new_trips(conn, trip: schema.Trip):
     sql = f"""
-        INSERT INTO { config.TABLE_TRIPS } (trip_title, description, leader_id, start_datetime, end_datetime, status, trip_type, meeting_location)
-        VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
-        
+        INSERT INTO { config.TABLE_TRIPS } (trip_title, description, leader_id, start_datetime, end_datetime, meeting_location)
+        VALUES(%s, %s, %s, %s, %s, %s, %s)
+        RETURNING trip_id
     """
     
-    params = (trip.trip_title, trip.description, trip.leader_id, trip.start_datetime, trip.end_datetime, trip.status, trip.trip_type, trip.meeting_location)
+    params = (trip.trip_title, trip.description, trip.leader_id, trip.start_datetime, trip.end_datetime, trip.meeting_location)
 
+    result =  utils.query_one(conn, sql, params)
+    return result['trip_id']
+
+
+
+def add_user_to_trip(conn, trip_id: str, user_id: str):
+    sql = f"""
+        INSERT INTO { config.TABLE_TRIP_MEMBERS } (trip_id, user_id)
+        VALUES(%s, %s)
+    """
+    
+    params = (trip_id, user_id)
+
+    return utils.execute(conn, sql, params)
+
+
+
+
+
+def delete_trip(conn, trip_id: str):
+    sql = f"""
+        DELETE FROM { config.TABLE_TRIPS }
+        WHERE trip_id = %s
+    """
+
+    params = (trip_id, )
+    return utils.execute(conn, sql, params)
+
+
+
+
+def update_trip(conn, trip: schema.Trip, trip_id: str):
+    sql = f"""
+        UPDATE { config.TABLE_TRIPS } 
+        SET 
+            trip_title=%s,
+            description=%s, 
+            start_datetime=%s,
+            end_datetime=%s,
+            meeting_location=%s
+        WHERE trip_id = %s
+    """
+
+    params = (trip.trip_title, trip.description, trip.start_datetime, trip.end_datetime, trip.meeting_location, trip_id)
+    return utils.execute(conn, sql, params)
+
+
+
+
+
+def delete_user_from_trip(conn, trip_id: str, user_id: str):
+    sql = f"""
+        DELETE FROM { config.TABLE_TRIP_MEMBERS }
+        WHERE trip_id = %s and user_id =%s
+    """
+
+    params = (trip_id, user_id)
+    return utils.execute(conn, sql, params)
+
+
+
+
+
+def update_trip_leader(conn, trip_id, user_id):
+    sql = f"""
+        UPDATE { config.TABLE_TRIPS } 
+        SET leader_id = %s
+        WHERE trip_id = %s
+    """
+
+    params = (user_id, trip_id)
     return utils.execute(conn, sql, params)
