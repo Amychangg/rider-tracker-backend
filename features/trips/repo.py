@@ -92,3 +92,19 @@ def update_trip_leader(conn, trip_id: str, user_id: str) -> None:
     """
 
     utils.execute(conn, sql, (user_id, trip_id))
+
+
+
+
+
+def get_user_ongoing_trip(conn, user_id):
+    sql = """
+        SELECT *
+        FROM trips t
+        JOIN trip_members tm
+            ON t.trip_id = tm.trip_id
+        WHERE
+            tm.user_id = %s
+            AND NOW() BETWEEN t.start_datetime AND t.end_datetime
+        """
+    return utils.query_all(conn, sql, (user_id,))

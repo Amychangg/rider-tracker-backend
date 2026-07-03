@@ -65,3 +65,13 @@ def update_trip_leader(trip_id: str, user_id: str) -> None:
         except Exception as e:
             logger.exception(e)
             raise HTTPException(status_code=500, detail="Failed to update trip leader")
+
+
+
+def get_user_ongoing_trip(user_id: str) -> list[dict]:
+    with conn_context() as conn:
+        try:
+            return repo.get_user_ongoing_trip(conn, user_id)
+        except Exception as e:
+            logger.exception(e)
+            raise HTTPException(status_code=500, detail="Failed to get trips")

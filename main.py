@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from features.users import router as users_router
 from features.trips import router as trips_router
+from features.road_map import router as road_map_router
+
 import uvicorn
 from core.config import HOST
 
@@ -10,6 +12,8 @@ app = FastAPI()
 
 app.include_router(users_router.router)
 app.include_router(trips_router.router)
+app.include_router(road_map_router.router)
+
 
 
 
