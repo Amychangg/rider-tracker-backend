@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from collections.abc import Generator
 from psycopg2.pool import ThreadedConnectionPool
-from database.config import settings
+from core.config import settings
 import threading
 
 _pool = None

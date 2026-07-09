@@ -11,6 +11,8 @@ class ConnectionManager:
         self.user_state: dict[str, dict[str, dict]] = {}
         # status: ACTIVE / PAUSED / OFFLINE / LEFT
 
+        print(self)
+
     async def connect(self, websocket: WebSocket, trip_id: str, user_id: str):
         await websocket.accept()
 
@@ -35,7 +37,7 @@ class ConnectionManager:
         self._ensure_user(trip_id, user_id)
 
         self.user_state[trip_id][user_id]["status"] = "ACTIVE"
-        print(f"[ ACTIVE ] {trip_id} - {user_id}")
+        print(f"[ACTIVE] {trip_id} - {user_id}")
 
     # -------------------------
     # PAUSE RIDE
@@ -44,7 +46,7 @@ class ConnectionManager:
         self._ensure_user(trip_id, user_id)
 
         self.user_state[trip_id][user_id]["status"] = "PAUSED"
-        print(f"[ PAUSED ] {trip_id} - {user_id}")
+        print(f"[PAUSED] {trip_id} - {user_id}")
 
     # -------------------------
     # UPDATE LOCATION
@@ -67,7 +69,7 @@ class ConnectionManager:
         if trip_id in self.user_state:
             self.user_state[trip_id][user_id]["status"] = "LEFT"
 
-        print(f"[ LEFT ] {trip_id} - {user_id}")
+        print(f"[LEFT] {trip_id} - {user_id}")
 
     # -------------------------
     # DISCONNECT (network)
@@ -80,7 +82,7 @@ class ConnectionManager:
             if user_id in self.user_state[trip_id]:
                 self.user_state[trip_id][user_id]["status"] = "OFFLINE"
 
-        print(f"[ OFFLINE ] {trip_id} - {user_id}")
+        print(f"[OFFLINE] {trip_id} - {user_id}")
 
     # -------------------------
     # BROADCAST

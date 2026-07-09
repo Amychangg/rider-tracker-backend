@@ -1,4 +1,5 @@
-from database import config, utils
+from database import utils
+from core import config
 from features.trips import schema
 
 
