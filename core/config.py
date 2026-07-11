@@ -1,5 +1,5 @@
-HOST = '172.16.16.77'
-# HOST = '192.168.0.146'
+# HOST = '172.16.16.77'
+HOST = '192.168.68.50'
 
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_DAYS: int
+
+    LINE_CHANNEL_ID: str
+    LINE_CHANNEL_SECRET: str
 
 
 settings = Settings()

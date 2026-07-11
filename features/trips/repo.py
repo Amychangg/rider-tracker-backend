@@ -1,5 +1,5 @@
 from database import utils
-from core import config
+from core.config import settings
 from features.trips import schema
 
 
@@ -23,11 +23,11 @@ def select_trips_and_participated_users(conn, user_id: str) -> list[dict]:
                 ) FILTER (WHERE tm.user_id IS NOT NULL),
                 '[]'
             ) AS members
-        FROM {config.TABLE_TRIPS} t
-        LEFT JOIN {config.TABLE_TRIP_MEMBERS} tm ON t.trip_id = tm.trip_id
-        LEFT JOIN {config.TABLE_USERS} u ON tm.user_id = u.user_id
+        FROM {settings.TABLE_TRIPS} t
+        LEFT JOIN {settings.TABLE_TRIP_MEMBERS} tm ON t.trip_id = tm.trip_id
+        LEFT JOIN {settings.TABLE_USERS} u ON tm.user_id = u.user_id
         WHERE t.trip_id IN (
-            SELECT trip_id FROM {config.TABLE_TRIP_MEMBERS} WHERE user_id = %s
+            SELECT trip_id FROM {settings.TABLE_TRIP_MEMBERS} WHERE user_id = %s
         )
         GROUP BY t.trip_id
     """
@@ -36,7 +36,7 @@ def select_trips_and_participated_users(conn, user_id: str) -> list[dict]:
 
 def insert_trip(conn, trip: schema.TripCreate) -> str:
     sql = f"""
-        INSERT INTO {config.TABLE_TRIPS}
+        INSERT INTO {settings.TABLE_TRIPS}
             (trip_title, description, leader_id, start_datetime, end_datetime, trip_type, meeting_location)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING trip_id
@@ -50,7 +50,7 @@ def insert_trip(conn, trip: schema.TripCreate) -> str:
 
 def add_trip_member(conn, trip_id: str, user_id: str) -> None:
     sql = f"""
-        INSERT INTO {config.TABLE_TRIP_MEMBERS} (trip_id, user_id)
+        INSERT INTO {settings.TABLE_TRIP_MEMBERS} (trip_id, user_id)
         VALUES (%s, %s)
     """
     utils.execute(conn, sql, (trip_id, user_id))
@@ -58,7 +58,7 @@ def add_trip_member(conn, trip_id: str, user_id: str) -> None:
 
 def update_trip(conn, trip_id: str, trip: schema.TripUpdate) -> None:
     sql = f"""
-        UPDATE {config.TABLE_TRIPS}
+        UPDATE {settings.TABLE_TRIPS}
         SET trip_title=%s, description=%s, start_datetime=%s,
             end_datetime=%s, trip_type=%s, meeting_location=%s
         WHERE trip_id = %s
@@ -71,7 +71,7 @@ def update_trip(conn, trip_id: str, trip: schema.TripUpdate) -> None:
 
 def delete_trip(conn, trip_id: str) -> None:
     sql = f"""
-        DELETE FROM {config.TABLE_TRIPS} 
+        DELETE FROM {settings.TABLE_TRIPS} 
         WHERE trip_id = %s
     """
     utils.execute(conn, sql, (trip_id,))
@@ -79,7 +79,7 @@ def delete_trip(conn, trip_id: str) -> None:
 
 def delete_trip_member(conn, trip_id: str, user_id: str) -> None:
     sql = f"""
-        DELETE FROM {config.TABLE_TRIP_MEMBERS} 
+        DELETE FROM {settings.TABLE_TRIP_MEMBERS} 
         WHERE trip_id = %s AND user_id = %s
     """
     utils.execute(conn, sql, (trip_id, user_id))
@@ -87,7 +87,7 @@ def delete_trip_member(conn, trip_id: str, user_id: str) -> None:
 
 def update_trip_leader(conn, trip_id: str, user_id: str) -> None:
     sql = f"""
-        UPDATE {config.TABLE_TRIPS} 
+        UPDATE {settings.TABLE_TRIPS} 
         SET leader_id = %s 
         WHERE trip_id = %s
     """

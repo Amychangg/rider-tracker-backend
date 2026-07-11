@@ -8,6 +8,8 @@ router = APIRouter(tags=["trips"], prefix="/trips")
 
 @router.get("/{user_id}", response_model=list[TripResponse])
 def get_trips(user_id: str):
+
+    print(user_id)
     return services.get_trips_and_participated_users(user_id)
 
 

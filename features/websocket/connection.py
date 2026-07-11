@@ -11,7 +11,7 @@ class ConnectionManager:
         self.user_state: dict[str, dict[str, dict]] = {}
         # status: ACTIVE / PAUSED / OFFLINE / LEFT
 
-        print(self)
+        # print(self)
 
     async def connect(self, websocket: WebSocket, trip_id: str, user_id: str):
         await websocket.accept()
