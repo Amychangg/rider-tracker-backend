@@ -34,7 +34,7 @@ def select_trips_and_participated_users(conn, user_id: str) -> list[dict]:
     return utils.query_all(conn, sql, (user_id,))
 
 
-def insert_trip(conn, trip: schema.TripCreate) -> str:
+def insert_trip(conn, trip: schema.TripCreate, user_id: str) -> str:
     sql = f"""
         INSERT INTO {settings.TABLE_TRIPS}
             (trip_title, description, leader_id, start_datetime, end_datetime, trip_type, meeting_location)
@@ -42,7 +42,7 @@ def insert_trip(conn, trip: schema.TripCreate) -> str:
         RETURNING trip_id
     """
     result = utils.query_one(conn, sql, (
-        trip.trip_title, trip.description, trip.leader_id,
+        trip.trip_title, trip.description, user_id,
         trip.start_datetime, trip.end_datetime, trip.trip_type, trip.meeting_location,
     ))
     return result["trip_id"]
@@ -52,6 +52,7 @@ def add_trip_member(conn, trip_id: str, user_id: str) -> None:
     sql = f"""
         INSERT INTO {settings.TABLE_TRIP_MEMBERS} (trip_id, user_id)
         VALUES (%s, %s)
+        ON CONFLICT Do NOTHING
     """
     utils.execute(conn, sql, (trip_id, user_id))
 
@@ -59,8 +60,13 @@ def add_trip_member(conn, trip_id: str, user_id: str) -> None:
 def update_trip(conn, trip_id: str, trip: schema.TripUpdate) -> None:
     sql = f"""
         UPDATE {settings.TABLE_TRIPS}
-        SET trip_title=%s, description=%s, start_datetime=%s,
-            end_datetime=%s, trip_type=%s, meeting_location=%s
+        SET 
+            trip_title=%s, 
+            description=%s, 
+            start_datetime=%s,
+            end_datetime=%s, 
+            trip_type=%s, 
+            meeting_location=%s
         WHERE trip_id = %s
     """
     utils.execute(conn, sql, (
@@ -96,8 +102,6 @@ def update_trip_leader(conn, trip_id: str, user_id: str) -> None:
 
 
 
-
-
 def get_user_ongoing_trip(conn, user_id):
     sql = """
         SELECT *
@@ -109,3 +113,27 @@ def get_user_ongoing_trip(conn, user_id):
             AND NOW() BETWEEN t.start_datetime AND t.end_datetime
         """
     return utils.query_all(conn, sql, (user_id,))
+
+
+
+def select_user_all_trips(conn, user_id: str):
+    sql = """
+        SELECT *
+        FROM trip_members tm
+        JOIN trips t 
+            ON tm.trip_id = t.trip_id
+        WHERE tm.user_id = %s
+    """
+    return utils.query_all(conn, sql, (user_id,))
+
+
+
+
+
+def select_trip(conn, joining_trip_id: str):
+    sql = """
+        SELECT * FROM trips
+        WHERE trip_id = %s
+    """
+
+    return utils.query_all(conn, sql, (joining_trip_id,))

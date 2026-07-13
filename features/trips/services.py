@@ -16,12 +16,12 @@ def get_trips_and_participated_users(user_id: str) -> list[dict]:
             raise HTTPException(status_code=500, detail="Failed to get trips")
 
 
-def insert_new_trips(trip: schema.TripCreate) -> str:
+def insert_new_trips(trip: schema.TripCreate, user_id: str) -> str:
     with conn_context() as conn:
         try:
             conn.autocommit = False
-            trip_id = repo.insert_trip(conn, trip)
-            repo.add_trip_member(conn, trip_id, trip.leader_id)
+            trip_id = repo.insert_trip(conn, trip, user_id)
+            repo.add_trip_member(conn, trip_id, user_id)
             conn.commit()
             return trip_id
         except Exception as e:
@@ -75,3 +75,23 @@ def get_user_ongoing_trip(user_id: str) -> list[dict]:
         except Exception as e:
             logger.exception(e)
             raise HTTPException(status_code=500, detail="Failed to get trips")
+        
+
+def add_user_to_trip(joining_trip_id: str, user_id: str):
+    with conn_context() as conn:
+        try:
+            user_trips = repo.select_user_all_trips(conn, user_id)
+            joining_trip = repo.select_trip(joining_trip_id)
+            check_time_availability(user_trips, joining_trip)
+
+            return repo.add_trip_member(conn, joining_trip_id, user_id)
+        except Exception as e:
+            logger.exception(e)
+            raise HTTPException(status_code=500, detail="Failed to get trips")
+
+
+
+
+# 檢查使用者現在要加入的旅程的起迄時間是否與現有旅程的起迄時間衝突
+def check_time_availability(user_trips, joining_trip):
+    pass

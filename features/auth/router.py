@@ -47,11 +47,5 @@ async def line_login_callback(payload: dict):
     )
 
     print('✨ 成功串接 LINE 用戶！', user_info)
-
-    user_info = services.check_user(user_info)
-    print('2222', user_info)
-    # 4. 這裡接下來就可以寫你原本系統的邏輯了（例如：去資料庫查這個 line_user_id 是否存在...）
-    return {
-        "status": "success",
-        "user": user_info
-    }
+    
+    return services.check_user(user_info)

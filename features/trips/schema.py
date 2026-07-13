@@ -5,7 +5,6 @@ from datetime import datetime
 class TripCreate(BaseModel):
     trip_title: str
     description: str
-    leader_id: str
     start_datetime: datetime
     end_datetime: datetime
     trip_type: str

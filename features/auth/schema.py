@@ -7,7 +7,6 @@ class UserLineInfo(BaseModel):
     picture_url: str
 
 
-class JwtRequiredInfo(BaseModel):
-    user_id: str
-    display_name: str
-    avatar_path: str
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = 'Bearer'

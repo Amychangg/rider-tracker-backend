@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta, timezone
-import jwt as jwt
+import jwt
 from core.config import settings
-from features.auth import schema
 
 
 
-def create_access_token(jwt_info: schema.JwtRequiredInfo) -> str:
+def create_access_token(user_id: str) -> str:
     """
     建立 JWT Access Token
     """
@@ -13,10 +12,8 @@ def create_access_token(jwt_info: schema.JwtRequiredInfo) -> str:
     expire = datetime.now(timezone.utc) + timedelta(days=settings.ACCESS_TOKEN_EXPIRE_DAYS)
 
     payload = {
-        "sub": jwt_info.user_id,
-        "exp": expire,
-        "name": jwt_info.display_name,
-        "avatar": jwt_info.avatar_path
+        "sub": user_id,
+        "exp": expire
     }
 
     return jwt.encode(
