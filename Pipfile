@@ -4,6 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+fastapi = "==0.115.12"
+uvicorn = "==0.34.2"
+psycopg2 = "==2.9.9"
+pydantic = "==2.11.3"
+pydantic-settings = "==2.14.2"
+PyJWT = "==2.10.1"
+httpx = "==0.28.1"
+python-dotenv = "==1.2.2"
+websockets = "==16.0"
+starlette = "==0.46.2"
 
 [dev-packages]
 

@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-import jwt_token
+from features.auth import jwt_token
 
 security = HTTPBearer()
 

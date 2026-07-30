@@ -81,7 +81,7 @@ def add_user_to_trip(joining_trip_id: str, user_id: str):
     with conn_context() as conn:
         try:
             user_trips = repo.select_user_all_trips(conn, user_id)
-            joining_trip = repo.select_trip(joining_trip_id)
+            joining_trip = repo.select_trip(conn, joining_trip_id)
             check_time_availability(user_trips, joining_trip)
 
             return repo.add_trip_member(conn, joining_trip_id, user_id)
