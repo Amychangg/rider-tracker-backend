@@ -20,4 +20,4 @@ def insert_new_user_info(conn, user_info: schema.UserLineInfo):
     RETURNING user_id
     """
 
-    return utils.execute(conn, sql, (user_info.line_user_id, user_info.display_name))
+    return utils.query_one(conn, sql, (user_info.line_user_id, user_info.display_name))

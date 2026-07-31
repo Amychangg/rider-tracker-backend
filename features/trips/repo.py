@@ -103,10 +103,10 @@ def update_trip_leader(conn, trip_id: str, user_id: str) -> None:
 
 
 def get_user_ongoing_trip(conn, user_id):
-    sql = """
+    sql = f"""
         SELECT *
-        FROM trips t
-        JOIN trip_members tm
+        FROM {settings.TABLE_TRIPS} t
+        JOIN {settings.TABLE_TRIP_MEMBERS} tm
             ON t.trip_id = tm.trip_id
         WHERE
             tm.user_id = %s
@@ -117,10 +117,10 @@ def get_user_ongoing_trip(conn, user_id):
 
 
 def select_user_all_trips(conn, user_id: str):
-    sql = """
+    sql = f"""
         SELECT *
-        FROM trip_members tm
-        JOIN trips t 
+        FROM {settings.TABLE_TRIP_MEMBERS} tm
+        JOIN {settings.TABLE_TRIPS} t 
             ON tm.trip_id = t.trip_id
         WHERE tm.user_id = %s
     """
@@ -131,8 +131,8 @@ def select_user_all_trips(conn, user_id: str):
 
 
 def select_trip(conn, joining_trip_id: str):
-    sql = """
-        SELECT * FROM trips
+    sql = f"""
+        SELECT * FROM {settings.TABLE_TRIPS}
         WHERE trip_id = %s
     """
 

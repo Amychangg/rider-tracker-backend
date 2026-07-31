@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta, timezone
 import jwt
 from core.config import settings
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 
-
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def create_access_token(user_id: str) -> str:
     """
@@ -23,15 +25,24 @@ def create_access_token(user_id: str) -> str:
     )
 
 
-def decode_access_token(token: str) -> dict:
+def decode_access_token(token: str = Depends(oauth2_scheme)) -> dict:
     """
-    驗證 JWT 並回傳 payload
+    驗證 JWT 並解碼回傳 payload
     """
-
-    payload = jwt.decode(
-        token,
-        settings.SECRET_KEY,
-        algorithms=[settings.ALGORITHM]
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="無效或已過期的 Token",
+        headers={"WWW-Authenticate": "Bearer"},
     )
-
-    return payload
+    
+    try:
+        # 解碼 Token
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+        return payload
+    except jwt.PyJWTError:
+        # 包含 Token 過期 (ExpiredSignatureError) 或 簽名錯誤 (DecodeError)
+        raise credentials_exception

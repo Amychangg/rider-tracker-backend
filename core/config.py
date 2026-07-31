@@ -1,5 +1,5 @@
 # HOST = '172.16.16.77'
-HOST = '192.168.68.50'
+HOST = '192.168.68.53'
 
 
 from pydantic_settings import BaseSettings, SettingsConfigDict

@@ -1,4 +1,3 @@
-from fastapi import APIRouter
 from fastapi import APIRouter, HTTPException
 import httpx
 from core.config import settings
@@ -9,12 +8,6 @@ from features.auth import services, schema
 router = APIRouter(
     tags=["auth"], prefix="/auth"
 )
-
-
-
-# 接收flutter回傳的line auth code
-from fastapi import HTTPException
-import httpx
 
 @router.post('/line/login')
 async def line_login_callback(payload: dict):
