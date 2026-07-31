@@ -137,3 +137,32 @@ def select_trip(conn, joining_trip_id: str):
     """
 
     return utils.query_all(conn, sql, (joining_trip_id,))
+
+
+def insert_location_history(
+    conn,
+    trip_id: str,
+    user_id: str,
+    locations: list[schema.LocationPoint],
+) -> None:
+    if not locations:
+        return
+
+    values = []
+    params = []
+    for loc in locations:
+        values.append("(%s, %s, %s, %s, COALESCE(%s, NOW()))")
+        params.extend([
+            trip_id,
+            user_id,
+            loc.latitude,
+            loc.longitude,
+            loc.timestamp,
+        ])
+
+    sql = f"""
+        INSERT INTO {settings.TABLE_LOCATION_HISTORY}
+            (trip_id, user_id, latitude, longitude, timestamp)
+        VALUES {', '.join(values)}
+    """
+    utils.execute(conn, sql, params)

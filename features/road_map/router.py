@@ -67,3 +67,8 @@ async def road_map(websocket: WebSocket, trip_id: str):
 
     except WebSocketDisconnect:
         manager.disconnect(trip_id, user_id)
+        await manager.broadcast(trip_id, {
+            "type": "connection_status",
+            "user_id": user_id,
+            "connection_status": "offline",
+        })

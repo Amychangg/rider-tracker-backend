@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     TABLE_USERS: str
     TABLE_TRIPS: str
     TABLE_TRIP_MEMBERS: str
+    TABLE_LOCATION_HISTORY: str = "trip_location_history"
 
     SECRET_KEY: str
     ALGORITHM: str = "HS256"

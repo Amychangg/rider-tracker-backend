@@ -77,6 +77,15 @@ def get_user_ongoing_trip(user_id: str) -> list[dict]:
             raise HTTPException(status_code=500, detail="Failed to get trips")
         
 
+def save_location_history(trip_id: str, user_id: str, body: schema.LocationHistoryCreate) -> None:
+    with conn_context() as conn:
+        try:
+            repo.insert_location_history(conn, trip_id, user_id, body.locations)
+        except Exception as e:
+            logger.exception(e)
+            raise HTTPException(status_code=500, detail="Failed to save location history")
+
+
 def add_user_to_trip(joining_trip_id: str, user_id: str):
     with conn_context() as conn:
         try:
