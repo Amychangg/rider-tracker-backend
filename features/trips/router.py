@@ -54,5 +54,5 @@ def get_user_ongoing_trip(user_id: str):
 
 # 使用者加入旅程
 @router.post('/{trip_id}/member')
-def add_member(user_id: str = Depends(get_current_user)):
-    pass
+def add_member(trip_id: str, user_id: str = Depends(get_current_user)):
+    services.add_user_to_trip(trip_id, user_id)
